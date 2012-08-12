@@ -1,0 +1,54 @@
+//problem space
+N words
+K x J grid
+M grid points
+8 directions
+
+It is a N tall tree and each branch has 8*M children.
+
+Thus O((M*8)^N) 
+
+Example:
+(30×30×8)^26 = ~2 googols
+
+
+//other implemenations
+======================
+== http://www.coderprofile.com/networks/source-codes/548/wordsearch-generator  == C#
+Randomly selects point.
+If word fits then try next word else try again until no words left.
+
+Will go into infinite loop
+
+
+== http://fswordfinder.sourceforge.net/ == PHP
+For each word
+until fits or X tries are made: try placing
+
+
+== http://wordsearchcreator.org/ == C++
+does use a vector word placing function
+can expand grid. Despite being C++, fragments
+grid.
+
+Has two skip conditions
+1. skips a word after M * 8 tries
+2. re-attempts whole search if word skiped
+Appears that #1 always causes #2.
+He must have removed words in prior versions
+
+
+== http://www.classhelper.org/wordfind_software.shtml == Perl
+Has no idea about vectors, even adds a 'reverse' word option.
+The reverse option is useless and provides the same result
+as an insert with the opposite direction and a different point.
+
+Does upto 100 tries per word before skipping word
+
+
+== https://code.google.com/p/wordsearch-android/ == Java
+Does use a vector with unit vectors. Word set is not fixed.
+
+starts with max word length.
+Tries a word, on failure continues and reduces word length
+When two words have been continued: one fewer words will be added

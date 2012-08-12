@@ -1,0 +1,56 @@
+The Algorithmn
+==============
+
+The algo is based on Bin Packing's first fit decreasing.
+Like bin packing we can use more bins but
+that envolves moving to a larger blank grid.
+
+Bins are all: columns + rows + diagnoals
+Any add will always effect a column, row, and diagonal.
+
+Our word list is sorted from longest to shortest.
+
+00. clear board
+01. pick point, z := point's diag
+02. pick longest word or goto 30
+03. check bins col[x], row[y], diag[z], diag[z++] for capacity then goto 10
+04. x = (x + 1) % width
+05. y = (y + 1) % height
+06. z = z + 1 % num_diags
+07. if point == original point then goto 20.
+08. goto 02
+
+10. pick pos in bin
+11. pos = (pos +1) % bin.size
+12. if word fits at pos then goto 01
+13. if pos == orginal pos then goto 03
+14. goto 11.
+
+20. if tries < max_tries then tries++ and goto 00
+21. tries = 0;
+22. height++, width++
+23. goto 00
+
+30. tries = 0;
+31. if board contains band words goto 00
+33. pick first empty point
+34. add letter
+35. if no bandword occurs at point goto 36
+35.1 point = next_letter
+35.2 if point == original_letter then goto 00
+36. move to next empty point
+37. if empty point == board end goto 40
+38. goto 34
+
+40. print grid to stdout
+
+Implementation details
+======================
+Word list sorting occurs in our caller.
+
+Each word's length is computed and stored in a struct along
+with the string.
+
+Need counts of free space in each bin.
+The diagonal array can be index with the formula:
+( (x-y) + (max(width, height)/2 +1) )
