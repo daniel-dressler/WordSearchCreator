@@ -1,11 +1,13 @@
 // ./a.out 5 5 255 1 "a;" 1 "fuck;" 1231
 
-/* ----------- Includes -------------------- */
+/* =========== Includes ============== */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
-/* ----------- Declarations ---------------- */
+
+/* =========== Declarations ============== */
 #define RESIZE_THRESHOLD 20
 /* Debuging */
 /* In production only the board unformated
@@ -28,8 +30,6 @@
 		}\
 	}
 #endif
-
-
 
 /* Like unix permissions. Each new permission is greator than
  * all prior ones combined.
@@ -56,6 +56,8 @@ typedef struct {
 	letter *string;
 } word_s;
 
+
+/* =========== Board Object ===================== */
 /* ----------- Board Member data ---------------- */
 typedef struct {
 	int num_rows;
@@ -115,12 +117,14 @@ void newBoard(board_obj *this, int width, int height)
 	/* Sat down with pencil and paper
 	 * and worked out these formulas.
 	 * If you need to understand them
-	 * you'll want to do the same. */
+	 * you'll have to do the same.
+	 * Sorry, I don't know how I could
+	 * explain them. */
 	this->bin.num_dias = width + height - 1;
 	this->bin.dia = malloc(sizeof(int) * this->bin.num_dias);
 	this->bin.dia_offset = width - 1;
 	console( "-- dia capacity --\n" );
-	for (i = 0; i < this->bin.num_dias; i++) {
+	for (i = 0; i < this->bin.num_dias; i++) {/*todo: fix formula on non-squares*/
 		w = this->bin.dia_offset - i;
 		if (w > 0)
 			this->bin.dia[i] = width - w;
@@ -149,7 +153,7 @@ void clearBoard(board_obj *this)
 }
 
 
-/* ----------- Point Object ----------------- */
+/* =========== Point Object ============== */
 typedef struct {
 	int x;
 	int y;
@@ -170,26 +174,8 @@ point getNextPoint(board_obj *board, point p, point dp)
 	return p;
 }
 
-/* ------------- utility -------------------- */
-word_s *parseWordList (int length, char *source)
-{
-	word_s *words;
-	int i = 0;
-	int k = 0;
-	/*todo: init length */
-	words = malloc(sizeof(*words) * (length + 1));
-	(words + length) = NULL;
-	do {
-		words[i++].string = (letter *)(source + k);
-		while (source[k] != ';') {
-			k++;
-		}
-		source[k++] = '\0';
-	} while (i < length);
-	return words;
-}
 
-/* -------------- Bin checks ---------------- */
+/* =========== Bin checks & manipulators ============== */
 int fitCol(board_obj *board, point p, word_s *word)
 {
 	return (board->bin.col[p.x] <= word->length);
@@ -219,13 +205,32 @@ int addDia(board_obj *board, point p)
 	board->bin.dia[p.y - p.x + board->bin.dia_offset]--;
 }
 
-/* -------------- Word Fiting ------------- */
-/* check bounds */
+
+/* =========== Board manipulators ============== */
+/* The board is layed out from top left corner.
+ * like windowing addresses.*/
+ 
+/* provides fast access to a point on the board */
+#define accessBoard(p) (*(board->board + p.x + board->width * p.y))
+
 #define checkBounds(p) (p.x >= 0 && p.y >= 0 && \
 						(p.x < board->width) && (p.y < board->height))
 
-/* provides fast access to a point on the board */
-#define accessBoard(p) (*(board->board + p.x + board->width * p.y))
+int testForFragmentation(board_obj *board,
+					letter *word,
+					point p,
+					point dp)
+{
+	int i = 0;
+	while (checkBounds(p) &&
+			(accessBoard(p) == '\0' ||
+			 accessBoard(p) == word[i])) {
+		p = getNextPoint(board, p, dp);
+		if (word[i++] == '\0')
+			return 1;
+	}
+	return 0;
+}
 
 void pasteWord(board_obj *board,
 				letter *word,
@@ -242,22 +247,6 @@ void pasteWord(board_obj *board,
 	}
 }
 
-int testFit(board_obj *board,
-					letter *word,
-					point p,
-					point dp)
-{
-	int i = 0;
-	while (checkBounds(p) &&
-			(accessBoard(p) == '\0' ||
-			 accessBoard(p) == word[i++])) {
-		p = getNextPoint(board, p, dp);
-		if (word[i] == '\0')
-			return 1;
-	}
-	return 0;
-}
-
 int insertWordInBin(board_obj *board,
 					word_s *word,
 					point p,
@@ -269,11 +258,12 @@ int insertWordInBin(board_obj *board,
 	inverse_dp.x = -dp.x;
 	inverse_dp.y = -dp.y;
 	do {
-		if (testFit(board, word->string, p, dp)) {
+		if (testForFragmentation(board, word->string, p, dp)) {
 			pasteWord(board, word->string, p, dp);
 			return 1;
 		}
-		if (testFit(board, word->string, inverse_p, inverse_dp)) {
+		if (testForFragmentation(board, word->string, inverse_p,
+														inverse_dp)) {
 			pasteWord(board, word->string, inverse_p, inverse_dp);
 			return 1;
 		}
@@ -284,9 +274,27 @@ int insertWordInBin(board_obj *board,
 	return 0;
 }
 
-/* ------------ Word Search Creating Algorithmn -------- */
-/* The board is layed out from top left corner.
- * like windowing addresses.*/
+
+/* =========== Algorithmn ============== */
+
+/* ---- Compiled Directions ---- */
+typedef struct {
+	int direction;
+	int (*testDirectionFit)(board_obj *board, point p, word_s *word);
+	point unit_vector;
+} compiled_direction;
+
+compiled_direction compiled_directions[] = {
+	{NORTHWEST , &fitDia, {-1, -1}},
+	{NORTH     , &fitCol, { 0, -1}},
+	{NORTHEAST , &fitDia, {+1, -1}},
+	{EAST      , &fitCol, {+1,  0}},
+	{SOUTHEAST , &fitDia, {+1, +1}},
+	{SOUTH     , &fitCol, { 0, +1}},
+	{SOUTHWEST , &fitDia, {-1, +1}},
+	{WEST      , &fitRow, {-1,  0}}
+};
+
 int createWordSearch(board_obj *board)
 {
 	point p;
@@ -294,76 +302,46 @@ int createWordSearch(board_obj *board)
 	int diagonal;
 	word_s *word;
 	int tries = 0;
+	int i = 0;
+	int inserted = 0;
 	
 	word = board->words + board->words_iter++;
-	while (word != NULL) {
+	while (word->length != 0) {
 		p = getRandomPoint(board);
 		p_origin = getNextPoint(board, p, (point){-1, -1});
 		diagonal = p.y - p.x + board->bin.dia_offset;
 		
-		/* find room for word */
+		/* find room for word at point p. */
 		do {
-			/* todo: fix proapbilities */
-			if (NORTHWEST ^ board->allowed_angles &&
-				fitDia(board, p, word) &&
-				insertWordInBin(board, word, p, (point){-1, -1})) {
-				break;
-			} else
-			if (NORTH ^ board->allowed_angles &&
-				fitCol(board, p, word) &&
-				insertWordInBin(board, word, p, (point){0, -1})) {
-				break;
-			} else
-			if (NORTHEAST ^ board->allowed_angles &&
-				fitDia(board, p, word) &&
-				insertWordInBin(board, word, p, (point){1, -1})) {
-				break;
-			} else
-			if (EAST ^ board->allowed_angles &&
-				fitRow(board, p, word) &&
-				insertWordInBin(board, word, p, (point){1, 0})) {
-				break;
-			} else
-			if (SOUTHEAST ^ board->allowed_angles &&
-				fitRow(board, p, word) &&
-				insertWordInBin(board, word, p, (point){1, 1})) {
-				break;
-			} else
-			if (SOUTH ^ board->allowed_angles &&
-				fitRow(board, p, word) &&
-				insertWordInBin(board, word, p, (point){0, 1})) {
-				break;
-			} else
-			if (SOUTHWEST ^ board->allowed_angles &&
-				fitRow(board, p, word) &&
-				insertWordInBin(board, word, p, (point){-1, 1})) {
-				break;
-			} else
-			if (WEST ^ board->allowed_angles &&
-				fitRow(board, p, word) &&
-				insertWordInBin(board, word, p, (point){-1, 0})) {
-				break;
+			/* Test each direction */
+			for (i = rand() % 8; i < 8; i++ && !inserted) {
+				if (board->allowed_angles ^
+								compiled_directions[i].direction &&
+					compiled_directions[i].
+								testDirectionFit(board, p, word)) {
+					inserted = insertWordInBin(board, word, p,
+								compiled_directions[i].unit_vector);
+				}
 			}
-			
+
 			p = getNextPoint(board, p, (point){1, 1});
 			diagonal = (diagonal + 1) % board->bin.num_dias;		
-		} while (p.x != p_origin.x);
+		} while (!inserted && p.x != p_origin.x);
 		
 		/* If we failed to place a word
 		 * then reset and keep trying */
-		/*if (p.x == p_origin.x && p.y == p_origin.y) {
+		if (!inserted) {
 			if (tries++ < RESIZE_THRESHOLD) {
 				clearBoard(board);
 			} else {
 				tries = 0;
 				resizeBoard(board, 1);
 			}
-		}*/
+		}
 		
 		word = board->words + board->words_iter++;
 	}
 	
-	/* Fill Empty Points */
 	
 	/* if we find a swear */
 	if (0) {
@@ -374,10 +352,38 @@ int createWordSearch(board_obj *board)
 		return 0;
 	}
 	
+	/* Fill Empty Points without adding a swear */
+	i = 0;
+	while (i < board->area) {
+		if (board->board[i] == '\0')
+			board->board[i] = 'X';
+		i++;
+	}
 	return 1;
 }
 
-/* -------------- Main ----------------- */
+
+/* =========== Main ================== */
+word_s *parseWordList (int length, char *source)
+{
+	word_s *words;
+	int i = 0;
+	int k = 0;
+
+	words = malloc(sizeof(*words) * (length + 1));
+	do {
+		words[i].string = (letter *)(source + k);
+		while (source[k] != ';') {
+			k++;
+		}
+		source[k++] = '\0';
+		words[i].length = strlen(words[i].string);
+	} while (++i < length);
+	words[i].length = 0;
+	
+	return words;
+}
+
 void main (int argc, char *args[])
 {
 	board_obj this;
