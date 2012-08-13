@@ -52,5 +52,3 @@ Each word's length is computed and stored in a struct along
 with the string.
 
 Need counts of free space in each bin.
-The diagonal array can be index with the formula:
-( (x-y) + (max(width, height)/2 +1) )
