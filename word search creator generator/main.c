@@ -1,3 +1,5 @@
+// ./a.out 5 5 255 1 "a;" 1 "fuck;" 1231
+
 /* ----------- Includes -------------------- */
 #include <stdio.h>
 #include <stdlib.h>
@@ -171,10 +173,12 @@ point getNextPoint(board_obj *board, point p, point dp)
 /* ------------- utility -------------------- */
 word_s *parseWordList (int length, char *source)
 {
-	word_s *words = malloc(sizeof(*words) * length);
+	word_s *words;
 	int i = 0;
 	int k = 0;
-	
+	/*todo: init length */
+	words = malloc(sizeof(*words) * (length + 1));
+	(words + length) = NULL;
 	do {
 		words[i++].string = (letter *)(source + k);
 		while (source[k] != ';') {
@@ -294,7 +298,7 @@ int createWordSearch(board_obj *board)
 	word = board->words + board->words_iter++;
 	while (word != NULL) {
 		p = getRandomPoint(board);
-		p_origin = p;
+		p_origin = getNextPoint(board, p, (point){-1, -1});
 		diagonal = p.y - p.x + board->bin.dia_offset;
 		
 		/* find room for word */
@@ -339,22 +343,22 @@ int createWordSearch(board_obj *board)
 				fitRow(board, p, word) &&
 				insertWordInBin(board, word, p, (point){-1, 0})) {
 				break;
-			} else {
-				p = getNextPoint(board, p, (point){1, 1});
-				diagonal = (diagonal + 1) % board->bin.num_dias;
 			}
-		} while (p.x != p_origin.x || p.y != p_origin.y);
+			
+			p = getNextPoint(board, p, (point){1, 1});
+			diagonal = (diagonal + 1) % board->bin.num_dias;		
+		} while (p.x != p_origin.x);
 		
 		/* If we failed to place a word
 		 * then reset and keep trying */
-		if (p.x == p_origin.x && p.y == p_origin.y) {
+		/*if (p.x == p_origin.x && p.y == p_origin.y) {
 			if (tries++ < RESIZE_THRESHOLD) {
 				clearBoard(board);
 			} else {
 				tries = 0;
 				resizeBoard(board, 1);
 			}
-		}
+		}*/
 		
 		word = board->words + board->words_iter++;
 	}
@@ -390,7 +394,6 @@ void main (int argc, char *args[])
 	srand(atoi(args[8]));
 	
 	while (!createWordSearch(&this)) {/*empty*/}
-	
 	printBoard(this);
 }
 
