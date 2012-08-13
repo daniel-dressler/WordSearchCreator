@@ -3,7 +3,6 @@
 /* =========== Includes ============== */
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
 
 
@@ -16,7 +15,7 @@
 #ifndef __DEBUG__
 	#define console(...) 
 	#define printBoard(this) \
-		printf("%d,%d,%s", this.width, this.height,\
+		printf("%d,%d,%s\n", this.width, this.height,\
 												(char *)this.board);
 #else
 	#define console(...) printf(__VA_ARGS__)
@@ -140,6 +139,8 @@ void newBoard(board_obj *this, int width, int height)
 
 void resizeBoard(board_obj *this, int factor)
 {
+	console("Resizing board to %d:%d\n", this->width + factor, 
+											this->height + factor);
 	this->words_iter = 0;
 	this->unfit_boards = 0;
 	free(this->board);
@@ -148,6 +149,7 @@ void resizeBoard(board_obj *this, int factor)
 
 void clearBoard(board_obj *this)
 {
+	console("Clearing board\n");
 	free(this->board);
 	newBoard(this, this->width, this->height);
 }
@@ -169,8 +171,14 @@ point getRandomPoint(board_obj *board)
 
 point getNextPoint(board_obj *board, point p, point dp)
 {
-	p.x = (p.x + dp.x) % board->width;
-	p.y = (p.y + dp.y) % board->height;
+	/* Ugh, C leaves mod for negative oprands
+	 * implementation defined. This means that
+	 * -1 % 2 can == -1 and not the more mathy
+	 * -1 % 2 == 1. Thus we add an otherwise
+	 * redundent factor. This works so long as
+	 * the velocity is less than the board size. */
+	p.x = (p.x + dp.x + board->width) % board->width;
+	p.y = (p.y + dp.y + board->height) % board->height;
 	return p;
 }
 
@@ -225,7 +233,8 @@ int testForFragmentation(board_obj *board,
 	while (checkBounds(p) &&
 			(accessBoard(p) == '\0' ||
 			 accessBoard(p) == word[i])) {
-		p = getNextPoint(board, p, dp);
+		p.x += dp.x;
+		p.y += dp.y;
 		if (word[i++] == '\0')
 			return 1;
 	}
@@ -268,8 +277,10 @@ int insertWordInBin(board_obj *board,
 			return 1;
 		}
 		
-		p = getNextPoint(board, p, dp);
-		inverse_p = getNextPoint(board, inverse_p, inverse_dp);
+		p.x += dp.x;
+		p.y += dp.y;
+		inverse_p.x += inverse_dp.x;
+		inverse_p.y += inverse_dp.y;
 	} while (checkBounds(p) || checkBounds(inverse_p));
 	return 0;
 }
@@ -302,30 +313,39 @@ int createWordSearch(board_obj *board)
 	int diagonal;
 	word_s *word;
 	int tries = 0;
-	int i = 0;
-	int inserted = 0;
+	int i;
+	int inserted;
+	
+	console("== Creating board ==\n");
 	
 	word = board->words + board->words_iter++;
 	while (word->length != 0) {
+		console("Trying %s\n", word->string);
+
+		inserted = 0;
 		p = getRandomPoint(board);
-		p_origin = getNextPoint(board, p, (point){-1, -1});
+		p_origin = p;
 		diagonal = p.y - p.x + board->bin.dia_offset;
 		
 		/* find room for word at point p. */
 		do {
 			/* Test each direction */
-			for (i = rand() % 8; i < 8; i++ && !inserted) {
+			for (i = rand() % 8; i < 8 && !inserted; i++) {
 				if (board->allowed_angles ^
 								compiled_directions[i].direction &&
 					compiled_directions[i].
 								testDirectionFit(board, p, word)) {
 					inserted = insertWordInBin(board, word, p,
 								compiled_directions[i].unit_vector);
+					if (inserted) {
+						console("Inserted %s\n", word->string);
+					}
 				}
 			}
 
 			p = getNextPoint(board, p, (point){1, 1});
-			diagonal = (diagonal + 1) % board->bin.num_dias;		
+			diagonal = (diagonal + 1) % board->bin.num_dias;	
+		//console("%d,%d verses %d,%d\n",p.x, p.y, p_origin.x, p_origin.y);	
 		} while (!inserted && p.x != p_origin.x);
 		
 		/* If we failed to place a word
@@ -371,15 +391,17 @@ word_s *parseWordList (int length, char *source)
 	int k = 0;
 
 	words = malloc(sizeof(*words) * (length + 1));
-	do {
+	while (i < length) {
 		words[i].string = (letter *)(source + k);
 		while (source[k] != ';') {
 			k++;
 		}
 		source[k++] = '\0';
 		words[i].length = strlen(words[i].string);
-	} while (++i < length);
-	words[i].length = 0;
+		console("Added %d:%s\n", words[i].length, words[i].string);
+		i++;
+	}
+	words[length].length = 0;
 	
 	return words;
 }
