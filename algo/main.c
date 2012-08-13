@@ -203,6 +203,8 @@ void addRow(board_obj *board, point p)
 	board->bin.col[p.y]--;
 }
 
+/*todo: add proper support for the other direction of
+ * diagonals. */
 int fitDia(board_obj *board, point p, word_s *word)
 {
 	return (board->bin.dia[p.y - p.x + board->bin.dia_offset]
@@ -235,7 +237,7 @@ int testForFragmentation(board_obj *board,
 			 accessBoard(p) == word[i])) {
 		p.x += dp.x;
 		p.y += dp.y;
-		if (word[i++] == '\0')
+		if (word[++i] == '\0')
 			return 1;
 	}
 	return 0;
@@ -246,7 +248,7 @@ void pasteWord(board_obj *board,
 				point p,
 				point dp)
 {
-	while (accessBoard(p) = *(word)) {
+	while (*(word) != '\0' && (accessBoard(p) = *(word))) {
 		addCol(board, p);
 		addRow(board, p);
 		addDia(board, p);
@@ -314,6 +316,7 @@ int createWordSearch(board_obj *board)
 	word_s *word;
 	int tries = 0;
 	int i;
+	int i_origin;
 	int inserted;
 	
 	console("== Creating board ==\n");
@@ -330,22 +333,25 @@ int createWordSearch(board_obj *board)
 		/* find room for word at point p. */
 		do {
 			/* Test each direction */
-			for (i = rand() % 8; i < 8 && !inserted; i++) {
+			i_origin = i = rand() % 8;
+			do {
 				if (board->allowed_angles ^
 								compiled_directions[i].direction &&
 					compiled_directions[i].
 								testDirectionFit(board, p, word)) {
+					console("Atempting %s\n", word->string);
 					inserted = insertWordInBin(board, word, p,
 								compiled_directions[i].unit_vector);
 					if (inserted) {
-						console("Inserted %s\n", word->string);
+						console("Inserted %s\n\n", word->string);
 					}
 				}
-			}
+				i = (i + 1) % 8; 
+			} while (i != i_origin && !inserted);
 
 			p = getNextPoint(board, p, (point){1, 1});
-			diagonal = (diagonal + 1) % board->bin.num_dias;	
-		//console("%d,%d verses %d,%d\n",p.x, p.y, p_origin.x, p_origin.y);	
+			/*todo: fix not searching all diagonals */
+			diagonal = (diagonal + 1) % board->bin.num_dias;
 		} while (!inserted && p.x != p_origin.x);
 		
 		/* If we failed to place a word
@@ -376,7 +382,7 @@ int createWordSearch(board_obj *board)
 	i = 0;
 	while (i < board->area) {
 		if (board->board[i] == '\0')
-			board->board[i] = 'X';
+			board->board[i] = '.';
 		i++;
 	}
 	return 1;
