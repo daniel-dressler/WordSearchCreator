@@ -1,4 +1,6 @@
 Getwordsearches::Application.routes.draw do
+  get "landing_page/view"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -48,7 +50,7 @@ Getwordsearches::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-	root :to => 'index.html.erb'
+	root :to => 'landing_page#index'
 
   # See how all your routes lay out with "rake routes"
 

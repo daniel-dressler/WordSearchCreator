@@ -15,6 +15,30 @@
 	<%= csrf_meta_tags %>
 </head>
 <body>
+<div id="main" class="container">
+	<div class="row">
+		<div id="login" class="span2 offset8">
+			<a class="btn">Click to login</a>
+		</div>
+	</div>
+	<div id="main-head" class="row">
+		<div class="span4">
+			<a href="/"><img src="img/logo.png"></img></a>
+		</div>
+		<div id="navi" class="span6">
+			<div class="btn-group">
+				<a class="btn btn-large">Buy</a>
+				<a class="btn btn-large">Create Word Search</a>
+				<a class="btn btn-large">Contact Support</a>
+				<a class="btn btn-large">Ask a Question</a>
+			</div>
+		</div>
+	</div>
+	<hr>
 	<%= yield %>
+	<div class="row">
+		<div class="span4"><p></p></div>
+	</div>
+</div>
 </body>
 </html>
