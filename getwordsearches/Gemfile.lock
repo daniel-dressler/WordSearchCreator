@@ -119,7 +119,7 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
   jquery-rails
-  less-rails
+  less
   rails (= 3.2.5)
   sass-rails (~> 3.2.3)
   sqlite3
