@@ -6,8 +6,6 @@
 	<title><%= @appname %></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link href="css/style.less" rel="stylesheet/less">
-	<script src="js/less.js"></script>
 	<link rel="shortcut icon" href="img/favicon.png">
 
 	<%= stylesheet_link_tag    "application", :media => "all" %>
@@ -17,15 +15,15 @@
 <body>
 <div id="main" class="container">
 	<div class="row">
-		<div id="login" class="span2 offset8">
+		<div id="login" class="span3 offset9">
 			<a class="btn">Click to login</a>
 		</div>
 	</div>
 	<div id="main-head" class="row">
-		<div class="span4">
+		<div class="span5">
 			<a href="/"><img src="img/logo.png"></img></a>
 		</div>
-		<div id="navi" class="span6">
+		<div id="navi" class="span7">
 			<div class="btn-group">
 				<a class="btn btn-large">Buy</a>
 				<a class="btn btn-large">Create Word Search</a>
@@ -37,7 +35,7 @@
 	<hr>
 	<%= yield %>
 	<div class="row">
-		<div class="span4"><p></p></div>
+		<div class="span5"><p></p></div>
 	</div>
 </div>
 </body>

@@ -1,6 +1,4 @@
 Getwordsearches::Application.routes.draw do
-  get "landing_page/view"
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
