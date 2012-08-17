@@ -1,5 +1,5 @@
 三日- RoR unstlyed word search creation
-一日- user creation
+一日- user creation with https://github.com/plataformatec/devise/
 一日- fix right to left diagional, add swear support
 一日- assign routes
 二日- style user & word search creation
