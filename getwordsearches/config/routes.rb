@@ -3,7 +3,7 @@ Getwordsearches::Application.routes.draw do
 
   get "word_search/view"
 
-  get "word_search/create"
+  post "word_search/create"
 
   get "word_search/new"
 
