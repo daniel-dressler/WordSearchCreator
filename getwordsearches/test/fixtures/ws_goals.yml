@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  difficulty: 
+  name?: false
+  date?: false
+  due: MyString
+  title: MyString
+  set: 
+
+two:
+  difficulty: 
+  name?: false
+  date?: false
+  due: MyString
+  title: MyString
+  set: 

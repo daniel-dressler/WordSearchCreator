@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Prototype:</b>
+  <%= @word_search_set.prototype %>
+</p>
+
+<p>
+  <b>Goal:</b>
+  <%= @word_search_set.goal %>
+</p>
+
+<p>
+  <b>Swears:</b>
+  <%= @word_search_set.swears %>
+</p>
+
+<p>
+  <b>Words:</b>
+  <%= @word_search_set.words %>
+</p>
+
+<p>
+  <b>Grids:</b>
+  <%= @word_search_set.grids %>
+</p>
+
+<p>
+  <b>Alphabet:</b>
+  <%= @word_search_set.alphabet %>
+</p>
+
+
+<%= link_to 'Edit', edit_word_search_set_path(@word_search_set) %> |
+<%= link_to 'Back', word_search_sets_path %>

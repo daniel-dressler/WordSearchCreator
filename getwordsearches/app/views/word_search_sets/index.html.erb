@@ -1,0 +1,33 @@
+<h1>Listing word_search_sets</h1>
+
+<table>
+  <tr>
+    <th>Prototype</th>
+    <th>Goal</th>
+    <th>Swears</th>
+    <th>Words</th>
+    <th>Grids</th>
+    <th>Alphabet</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @word_search_sets.each do |word_search_set| %>
+  <tr>
+    <td><%= word_search_set.prototype %></td>
+    <td><%= word_search_set.goal %></td>
+    <td><%= word_search_set.swears %></td>
+    <td><%= word_search_set.words %></td>
+    <td><%= word_search_set.grids %></td>
+    <td><%= word_search_set.alphabet %></td>
+    <td><%= link_to 'Show', word_search_set %></td>
+    <td><%= link_to 'Edit', edit_word_search_set_path(word_search_set) %></td>
+    <td><%= link_to 'Destroy', word_search_set, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Word search set', new_word_search_set_path %>

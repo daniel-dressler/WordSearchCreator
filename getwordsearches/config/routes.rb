@@ -1,4 +1,6 @@
 Getwordsearches::Application.routes.draw do
+  resources :word_search_sets
+
   get "word_search/index"
 
   get "word_search/view"
