@@ -1,4 +1,5 @@
 // ./a.out 5 5 255 1 "a;" 1 "fuck;" 1231
+// todo: fix allowed angles
 
 /* =========== Includes ============== */
 #include <stdio.h>
