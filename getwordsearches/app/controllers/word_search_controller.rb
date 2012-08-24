@@ -15,6 +15,12 @@ class WordSearchController < ApplicationController
   end
 
   def index
-  	@word_searches = WordSelection.all
+	  @word_searches = WordSelection.all
+  end
+  
+  def preview
+	  @word_search = WordSearchSet.new(nil)
+	  @word_search.addWordsAndSwears(params[:words], params[:swears])
+	  render :template => 'word_search/view', :layout => 'basic'
   end
 end

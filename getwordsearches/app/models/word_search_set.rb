@@ -1,9 +1,23 @@
 class WordSearchSet < ActiveRecord::Base
-  belongs_to :prototype
-  belongs_to :goal
-  belongs_to :swears
-  belongs_to :words
-  belongs_to :grids
-  belongs_to :alphabet
-  # attr_accessible :title, :body
+  has_one :prototype
+  has_one :goal
+  has_one :swears
+  has_one :words
+  has_many :grids
+  has_one :alphabet
+  
+  def initialize(goal)
+	  #self.goal = goal
+  end
+  
+  def addWordsAndSwears(words, swears)
+	  #cleaner = { |s| s
+	 @words = Word.new(words) 
+	 @sweats = Words.new(swears)
+	 
+  end
+  
+  def to_pdf
+	  
+  end
 end
