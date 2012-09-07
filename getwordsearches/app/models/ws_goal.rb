@@ -1,5 +1,8 @@
 class WsGoal < ActiveRecord::Base
-  belongs_to :difficulty
-  belongs_to :set
-  attr_accessible :date?, :due, :name?, :title
+  	belongs_to :set, :class_name => 'WordSearchSet'
+  	attr_accessor :date, :due, :name, :title, :copies
+
+  	def set(copies)
+		@copies = copies
+  	end
 end

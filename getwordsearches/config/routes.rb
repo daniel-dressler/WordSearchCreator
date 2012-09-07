@@ -1,22 +1,15 @@
 Getwordsearches::Application.routes.draw do
-  resources :word_search_sets
+  	resources :word_search_sets
 
-  get "word_search/index"
-  match "preview/:angles/:words/:swears/:seed", :to => "word_search#preview"
+  	get "word_search/index"
 
-  get "word_search/view"
+  	match "preview/:angles/:words/:swears/:seed", :to => "word_search#preview"
 
-  post "word_search/create"
+  	get "word_search/view"
 
-  get "word_search/new"
+  	post "word_search/create"
 
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
+  	get "word_search/new"
+	
 	root :to => 'landing_page#index'
-
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
 end

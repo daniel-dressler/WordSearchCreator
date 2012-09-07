@@ -56,9 +56,10 @@ ActiveRecord::Schema.define(:version => 20120823204827) do
 
   create_table "ws_goals", :force => true do |t|
     t.integer  "difficulty_id"
-    t.boolean  "name?"
-    t.boolean  "date?"
+    t.boolean  "name"
+    t.boolean  "date"
     t.string   "due"
+    t.integer  "copies"
     t.string   "title"
     t.integer  "set_id"
     t.datetime "created_at",    :null => false
