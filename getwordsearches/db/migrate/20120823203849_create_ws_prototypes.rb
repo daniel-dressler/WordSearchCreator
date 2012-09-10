@@ -4,10 +4,10 @@ class CreateWsPrototypes < ActiveRecord::Migration
       t.integer :height
       t.integer :width
       t.integer :seed
-      t.references :set
+      t.references :word_search_set
 
       t.timestamps
     end
-    add_index :ws_prototypes, :set_id
+    add_index :ws_prototypes, :word_search_set_id
   end
 end

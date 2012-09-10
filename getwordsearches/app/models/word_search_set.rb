@@ -9,11 +9,14 @@ class WordSearchSet < ActiveRecord::Base
 	def initialize
 		super
 		self.save
-		build_words
-		build_prototype
-		build_goal
-		build_swears
-		build_alphabet
+	end
+	
+	def step0
+		@words = build_words
+		@prototype = build_prototype
+		@goal = build_goal
+		@swears = build_swears
+		@alphabet = build_alphabet
 	end
 =begin	
 	def save
@@ -37,7 +40,7 @@ class WordSearchSet < ActiveRecord::Base
 
 	def press
 		@goal.copies.times do
-		puts self.grids.inspect	
+			puts self.grids.inspect	
 		end
 	end
 	

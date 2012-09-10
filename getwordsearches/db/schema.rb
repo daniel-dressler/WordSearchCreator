@@ -47,12 +47,12 @@ ActiveRecord::Schema.define(:version => 20120823204827) do
 
   create_table "ws_alphas", :force => true do |t|
     t.string   "chars"
-    t.integer  "set_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "word_search_set_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
-  add_index "ws_alphas", ["set_id"], :name => "index_ws_alphas_on_set_id"
+  add_index "ws_alphas", ["word_search_set_id"], :name => "index_ws_alphas_on_word_search_set_id"
 
   create_table "ws_goals", :force => true do |t|
     t.integer  "difficulty_id"
@@ -61,41 +61,41 @@ ActiveRecord::Schema.define(:version => 20120823204827) do
     t.string   "due"
     t.integer  "copies"
     t.string   "title"
-    t.integer  "set_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.integer  "word_search_set_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
   add_index "ws_goals", ["difficulty_id"], :name => "index_ws_goals_on_difficulty_id"
-  add_index "ws_goals", ["set_id"], :name => "index_ws_goals_on_set_id"
+  add_index "ws_goals", ["word_search_set_id"], :name => "index_ws_goals_on_word_search_set_id"
 
   create_table "ws_grids", :force => true do |t|
     t.string   "grid"
-    t.integer  "set_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "word_search_set_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
-  add_index "ws_grids", ["set_id"], :name => "index_ws_grids_on_set_id"
+  add_index "ws_grids", ["word_search_set_id"], :name => "index_ws_grids_on_word_search_set_id"
 
   create_table "ws_prototypes", :force => true do |t|
     t.integer  "height"
     t.integer  "width"
     t.integer  "seed"
-    t.integer  "set_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "word_search_set_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
-  add_index "ws_prototypes", ["set_id"], :name => "index_ws_prototypes_on_set_id"
+  add_index "ws_prototypes", ["word_search_set_id"], :name => "index_ws_prototypes_on_word_search_set_id"
 
   create_table "ws_word_lists", :force => true do |t|
     t.string   "words"
-    t.integer  "set_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.integer  "word_search_set_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
   end
 
-  add_index "ws_word_lists", ["set_id"], :name => "index_ws_word_lists_on_set_id"
+  add_index "ws_word_lists", ["word_search_set_id"], :name => "index_ws_word_lists_on_word_search_set_id"
 
 end

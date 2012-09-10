@@ -1,5 +1,5 @@
 class WsWordList < ActiveRecord::Base
-  	belongs_to :set, :class_name => 'WordSearchSet'
+  	belongs_to :WordSearchSet
   	attr_accessible :words
 
   	def set(words)

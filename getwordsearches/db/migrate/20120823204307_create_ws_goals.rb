@@ -7,11 +7,11 @@ class CreateWsGoals < ActiveRecord::Migration
       t.string :due
       t.integer :copies
       t.string :title
-      t.references :set
+      t.references :word_search_set
 
       t.timestamps
     end
     add_index :ws_goals, :difficulty_id
-    add_index :ws_goals, :set_id
+    add_index :ws_goals, :word_search_set_id
   end
 end
