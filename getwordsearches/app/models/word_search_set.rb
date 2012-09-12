@@ -8,29 +8,24 @@ class WordSearchSet < ActiveRecord::Base
 
 	def initialize
 		super
-		self.save
-	end
-	
-	def step0
 		@words = build_words
 		@prototype = build_prototype
 		@goal = build_goal
 		@swears = build_swears
 		@alphabet = build_alphabet
 	end
-=begin	
+		
 	def save
-		super.save
+		super
 		@words.save
 		@swears.save
 		@prototype.save
 		@goal.save
 		@alphabet.save
 	end
-=end
-	
-  	def step1(copies)
-		@goal.set(copies)
+
+  	def step1(copies, angles)
+		@goal.set(copies, angles)
   	end
 
   	def step2(words, swears)
@@ -39,13 +34,22 @@ class WordSearchSet < ActiveRecord::Base
   	end
 
 	def press
+		@prototype.set(5,5)
+		@offline_grids = []
 		@goal.copies.times do
-			puts self.grids.inspect	
+			goal = self.grids.build()	
+			goal.set(self)
+			@offline_grids.push goal
 		end
 	end
 	
   	def to_a
-		[]
+		assembled = []
+		@offline_grids.each do |grid|
+			puts "here"
+			assembled.push grid.to_a	
+		end
+		assembled
 	end
 
   	def to_pdf

@@ -5,4 +5,8 @@ class WsWordList < ActiveRecord::Base
   	def set(words)
 	  	@words = words.split(/;/).sort!().join(";")
   	end
+	
+	def to_s
+		@words
+	end
 end

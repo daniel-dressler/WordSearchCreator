@@ -20,10 +20,8 @@ class WordSearchController < ApplicationController
 
   	def preview
 	  	@word_search_set = WordSearchSet.new()
-		@word_search_set.step0
-		@word_search_set.step1(1);
+		@word_search_set.step1(1, params[:angles]);
 	  	@word_search_set.step2(params[:words], params[:swears])
-		@word_search_set.save
 		@word_search_set.press
 	  	render :template => 'word_search/view', :layout => 'basic'
   	end

@@ -3,7 +3,7 @@ Getwordsearches::Application.routes.draw do
 
   	get "word_search/index"
 
-  	match "preview/:angles/:words/:swears/:seed", :to => "word_search#preview"
+  	match "preview/:angles/:words/:swears", :to => "word_search#preview"
 
   	get "word_search/view"
 

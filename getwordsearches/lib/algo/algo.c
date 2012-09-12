@@ -12,11 +12,11 @@
 /* Debuging */
 /* In production only the board unformated
  * and dimensions will be sent to stdout. */
-#define __DEBUG__ 1
+/*#define __DEBUG__ 1*/
 #ifndef __DEBUG__
 	#define console(...) 
 	#define printBoard(this) \
-		printf("%d,%d,%s\n", this.width, this.height,\
+		printf("%d;%d;%s\n", this.width, this.height, \
 												(char *)this.board);
 #else
 	#define console(...) printf(__VA_ARGS__)
@@ -336,7 +336,7 @@ int createWordSearch(board_obj *board)
 			/* Test each direction */
 			i_origin = i = rand() % 8;
 			do {
-				if (board->allowed_angles ^
+				if (board->allowed_angles &
 								compiled_directions[i].direction &&
 					compiled_directions[i].
 								testDirectionFit(board, p, word)) {
