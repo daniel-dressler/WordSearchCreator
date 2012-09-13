@@ -12,7 +12,7 @@
 /* Debuging */
 /* In production only the board unformated
  * and dimensions will be sent to stdout. */
-/*#define __DEBUG__ 1*/
+#define __DEBUG__ 1
 #ifndef __DEBUG__
 	#define console(...) 
 	#define printBoard(this) \
@@ -187,7 +187,7 @@ point getNextPoint(board_obj *board, point p, point dp)
 /* =========== Bin checks & manipulators ============== */
 int fitCol(board_obj *board, point p, word_s *word)
 {
-	return (board->bin.col[p.x] <= word->length);
+	return (board->bin.col[p.x] >= word->length);
 }
 void addCol(board_obj *board, point p)
 {
@@ -197,11 +197,11 @@ void addCol(board_obj *board, point p)
 
 int fitRow(board_obj *board, point p, word_s *word)
 {
-	return (board->bin.col[p.y] <= word->length);
+	return (board->bin.row[p.y] >= word->length);
 }
 void addRow(board_obj *board, point p)
 {
-	board->bin.col[p.y]--;
+	board->bin.row[p.y]--;
 }
 
 /*todo: add proper support for the other direction of
@@ -209,9 +209,9 @@ void addRow(board_obj *board, point p)
 int fitDia(board_obj *board, point p, word_s *word)
 {
 	return (board->bin.dia[p.y - p.x + board->bin.dia_offset]
-													<= word->length);
+													>= word->length);
 }
-int addDia(board_obj *board, point p)
+void addDia(board_obj *board, point p)
 {
 	board->bin.dia[p.y - p.x + board->bin.dia_offset]--;
 }
@@ -302,7 +302,7 @@ compiled_direction compiled_directions[] = {
 	{NORTHWEST , &fitDia, {-1, -1}},
 	{NORTH     , &fitCol, { 0, -1}},
 	{NORTHEAST , &fitDia, {+1, -1}},
-	{EAST      , &fitCol, {+1,  0}},
+	{EAST      , &fitRow, {+1,  0}},
 	{SOUTHEAST , &fitDia, {+1, +1}},
 	{SOUTH     , &fitCol, { 0, +1}},
 	{SOUTHWEST , &fitDia, {-1, +1}},
@@ -375,7 +375,7 @@ int createWordSearch(board_obj *board)
 		if (board->unfit_boards++ > RESIZE_THRESHOLD)
 			resizeBoard(board, 1);
 		else
-			clear_board();
+			clearBoard(board);
 		return 0;
 	}
 	
@@ -413,7 +413,7 @@ word_s *parseWordList (int length, char *source)
 	return words;
 }
 
-void main (int argc, char *args[])
+int main (int argc, char *args[])
 {
 	board_obj this;
 	
@@ -430,5 +430,6 @@ void main (int argc, char *args[])
 	
 	while (!createWordSearch(&this)) {/*empty*/}
 	printBoard(this);
+	return 0;
 }
 
