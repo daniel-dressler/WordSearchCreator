@@ -12,7 +12,7 @@
 /* Debuging */
 /* In production only the board unformated
  * and dimensions will be sent to stdout. */
-#define __DEBUG__ 1
+/*#define __DEBUG__ 1*/
 #ifndef __DEBUG__
 	#define console(...) 
 	#define printBoard(this) \
