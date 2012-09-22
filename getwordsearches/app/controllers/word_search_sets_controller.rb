@@ -22,14 +22,16 @@ class WordSearchSetsController < ApplicationController
     	end
   	end
 
-  	# GET /word_search_sets/new
-  	# GET /word_search_sets/new.json
-  	def new
-    	@word_search_set = WordSearchSet.new
+  	def step1
+		if (params[:id] != nil)
+			@word_search_set = WordSearchSet.find(params[:id])
+		else
+			@word_search_set = WordSearchSet.new
+			@word_search_set.save
+		end
 
     	respond_to do |format|
-      		format.html # new.html.erb
-      		format.json { render json: @word_search_set }
+      		format.html 
     	end
   	end
 

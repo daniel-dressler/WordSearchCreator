@@ -1,0 +1,12 @@
+<div  style="position:relative; min-height:30px;" class="row">
+	<div style="position:absolute; left:0;">
+		<% if(@prior_step != nil) %>
+			<a class="btn" href="<%= @prior_step %>/<%= @word_search_set.id %>">(( Previous Step</a>
+		<% end %>
+	</div>
+	<div style="position:absolute; right:0;">
+		<% if(@next_step != nil) %>
+			<a class="btn btn-primary" href="<%= @next_step %>/<%= @word_search_set.id %>">Next Step ))</a>
+		<% end %>
+	</div>
+</div>
